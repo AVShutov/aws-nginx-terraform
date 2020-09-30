@@ -28,3 +28,8 @@ variable "key_name" {
   type    = string
   default = "client_key"
 }
+
+variable "sns_topic_name" {
+  type = string
+  default = "WebServer-ASG-topic"
+}

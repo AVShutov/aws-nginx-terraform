@@ -15,7 +15,6 @@ data "aws_availability_zones" "available" {}
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 data "aws_vpcs" "my_vpcs" {}
-
 data "aws_ami" "latest_ubuntu" {
   owners      = ["099720109477"]
   most_recent = true
@@ -23,6 +22,9 @@ data "aws_ami" "latest_ubuntu" {
     name   = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
+}
+data "aws_sns_topic" "asg_topic" {
+    name = var.sns_topic_name
 }
 
 resource "aws_vpc" "main_vpc" {
@@ -311,4 +313,21 @@ resource "aws_elb" "internal_elb" {
   tags = {
     Name = "WebServer-Highly-Available-ELB"
   }
+}
+
+# Create email notification. aws sns topic with subscription created manually
+# because the email endpoint needs to be authorized with email confirmation
+resource "aws_autoscaling_notification" "asg_notifications" {
+  group_names = [
+    aws_autoscaling_group.web.name,
+  ]
+
+  notifications = [
+    "autoscaling:EC2_INSTANCE_LAUNCH",
+    "autoscaling:EC2_INSTANCE_TERMINATE",
+    "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+    "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
+  ]
+
+  topic_arn = data.aws_sns_topic.asg_topic.arn
 }
