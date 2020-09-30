@@ -239,10 +239,12 @@ resource "aws_launch_configuration" "client" {
 resource "aws_autoscaling_group" "web" {
   name                 = "ASG-${aws_launch_configuration.web.name}"
   launch_configuration = aws_launch_configuration.web.name
-  min_size             = 1
+#  min_size             = 1
+  min_size             = 0
   max_size             = 4
 #  min_elb_capacity     = 1
-  desired_capacity     = 2
+#  desired_capacity     = 2
+  desired_capacity     = 0
   health_check_type    = "ELB"
   vpc_zone_identifier  = [aws_subnet.main_private_1.id, aws_subnet.main_private_2.id]
   load_balancers       = [aws_elb.internal_elb.name]
@@ -267,10 +269,12 @@ resource "aws_autoscaling_group" "web" {
 resource "aws_autoscaling_group" "client" {
   name                 = "ASG-${aws_launch_configuration.client.name}"
   launch_configuration = aws_launch_configuration.client.name
-  min_size             = 1
+#  min_size             = 1
+  min_size             = 0
   max_size             = 2
   #min_elb_capacity     = 1
-  desired_capacity     = 1
+#  desired_capacity     = 1
+  desired_capacity     = 0
   health_check_type    = "EC2"
   vpc_zone_identifier  = [aws_subnet.main_public_1.id, aws_subnet.main_public_2.id]
 
